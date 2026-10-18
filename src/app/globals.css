@@ -2,7 +2,9 @@
 @plugin "daisyui";
 @import "@heroui/styles";
 
-@layer utilities {
+@theme {
+  --animate-marquee: marquee 120s linear infinite;
+
   @keyframes marquee {
     0% {
       transform: translateX(0%);
@@ -11,14 +13,14 @@
       transform: translateX(-50%);
     }
   }
+}
 
-  .animate-marquee {
-    display: flex;
-    width: max-content;
-    animation: marquee 35s linear infinite;
-  }
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: var(--animate-marquee);
+}
 
-  .animate-marquee:hover {
-    animation-play-state: paused;
-  }
+.animate-marquee:hover {
+  animation-play-state: paused;
 }

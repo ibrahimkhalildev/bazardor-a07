@@ -1,9 +1,5 @@
-// src/lib/api.js
-
 const BASE_URLS = [
   'https://openapi.programming-hero.com/api/bazardor',
-  'https://api.api-store.workers.dev/api/bazardor',
-  'https://api.abcz.workers.dev/api/bazardor'
 ]
 
 export async function fetchWithFallback (endpoint, options = {}) {
@@ -37,6 +33,15 @@ export async function getCategories () {
 
   if (Array.isArray(res)) return res
   if (Array.isArray(res?.categories)) return res.categories
+  if (Array.isArray(res?.data)) return res.data
+  return []
+}
+
+export async function getAllProducts () {
+  const res = await fetchWithFallback('/products')
+
+  if (Array.isArray(res)) return res
+  if (Array.isArray(res?.products)) return res.products
   if (Array.isArray(res?.data)) return res.data
   return []
 }

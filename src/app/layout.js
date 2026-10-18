@@ -2,10 +2,6 @@ import './globals.css'
 import Header from './components/common/Header'
 import Footer from './components/common/Footer'
 
-export const metadata = {
-  title: 'বাজার দর - নিত্যপ্রয়োজনীয় বাজারদর',
-  description: 'আজকের বাজারের দাম এক নজরে'
-}
 
 export default function RootLayout ({ children }) {
   return (
