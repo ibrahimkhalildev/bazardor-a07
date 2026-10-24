@@ -3,17 +3,6 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const EMOJI_MAP = {
-  chal: '🍚',
-  dal: '🫘',
-  tel: '🫙',
-  sobji: '🥬',
-  mach: '🐟',
-  mangsho: '🍗',
-  'dim-dudh': '🥛',
-  moshla: '🌶️'
-}
-
 export default function CategoryNav ({ categories = [] }) {
   const pathname = usePathname()
 
@@ -26,11 +15,9 @@ export default function CategoryNav ({ categories = [] }) {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex items-center justify-start gap-2 overflow-x-auto py-2.5 no-scrollbar'>
           {categories.map(cat => {
-            const slug = cat.slug || cat.id || cat.category_id || ''
-            const name = String(
-              cat.nameBn || cat.name || cat.category || cat.title || slug
-            )
-            const emoji = cat.emoji || cat.icon || EMOJI_MAP[slug] || '🛒'
+            const slug = cat.slug || cat.id || ''
+            const name = cat.nameBn || cat.name || slug
+            const icon = cat.icon || cat.emoji || '🛒'
 
             const targetPath = `/category/${slug}`
             const isActive = pathname === targetPath
@@ -45,7 +32,7 @@ export default function CategoryNav ({ categories = [] }) {
                     : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
-                <span>{emoji}</span>
+                <span>{icon}</span>
                 <span suppressHydrationWarning>{name}</span>
               </Link>
             )

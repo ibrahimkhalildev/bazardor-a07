@@ -5,6 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
+import toast from "react-hot-toast";
+import { 
+  HiShoppingCart, 
+  HiChevronDown, 
+  HiUser, 
+  HiOutlineLogout 
+} from "react-icons/hi";
 
 const subscribe = () => () => { };
 const getSnapshot = () =>
@@ -44,17 +51,45 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       setIsLoggingOut(true);
+      setMenuOpen(false);
+
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("logout_success", "true");
+      }
+
       await signOut({
         fetchOptions: {
           onSuccess: () => {
-            setMenuOpen(false);
+            toast.success("সফলভাবে লগআউট হয়েছে!", {
+              id: "auth-notification",
+              duration: 5000,
+            });
             router.push("/");
             router.refresh();
+          },
+          onError: (ctx) => {
+            if (typeof window !== "undefined") {
+              sessionStorage.removeItem("logout_success");
+            }
+            toast.error(
+              ctx?.error?.message || "লগআউট করতে সমস্যা হয়েছে, আবার চেষ্টা করুন।",
+              {
+                id: "auth-notification",
+                duration: 5000,
+              }
+            );
           },
         },
       });
     } catch (error) {
       console.error("Sign out error:", error);
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("logout_success");
+      }
+      toast.error("লগআউট ব্যর্থ হয়েছে, আবার চেষ্টা করুন।", {
+        id: "auth-notification",
+        duration: 5000,
+      });
     } finally {
       setIsLoggingOut(false);
     }
@@ -64,19 +99,12 @@ export default function Navbar() {
   const displayName = user?.name ? user.name.split(" ")[0] : "ব্যবহারকারী";
 
   return (
-    <nav className="w-full bg-white border-b border-gray-100">
+    <nav className="w-full bg-white border-b border-gray-100 sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#087f43] flex items-center justify-center text-white shadow-xs">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 fill-current"
-                viewBox="0 0 24 24"
-              >
-                <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
-              </svg>
+              <HiShoppingCart className="w-5 h-5" />
             </div>
             <div>
               <span className="font-bold text-lg sm:text-xl text-gray-900 block leading-tight">
@@ -96,7 +124,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setMenuOpen((prev) => !prev)}
-                  className="flex items-center gap-2.5 p-1 rounded-full hover:bg-gray-50 transition-colors focus:outline-none"
+                  className="flex items-center gap-2.5 p-1 rounded-full hover:bg-gray-50 transition-colors focus:outline-none cursor-pointer"
                 >
                   {user.image ? (
                     <div className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200">
@@ -118,20 +146,11 @@ export default function Navbar() {
                     {displayName}
                   </span>
 
-                  <svg
-                    className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${menuOpen ? "rotate-180" : ""
-                      }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                  <HiChevronDown
+                    className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
+                      menuOpen ? "rotate-180" : ""
+                    }`}
+                  />
                 </button>
 
                 {menuOpen && (
@@ -151,17 +170,7 @@ export default function Navbar() {
                         onClick={() => setMenuOpen(false)}
                         className="flex items-center gap-2.5 text-xs font-medium text-gray-700 hover:text-gray-900 transition-colors py-1.5"
                       >
-                        <svg
-                          className="w-4 h-4 text-blue-500"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                        <HiUser className="w-4 h-4 text-blue-500" />
                         <span>আমার প্রোফাইল</span>
                       </Link>
 
@@ -169,21 +178,9 @@ export default function Navbar() {
                         type="button"
                         disabled={isLoggingOut}
                         onClick={handleSignOut}
-                        className="flex items-center gap-2.5 text-xs font-medium text-red-500 hover:text-red-600 disabled:opacity-50 transition-colors py-1.5 w-full text-left"
+                        className="flex items-center gap-2.5 text-xs font-medium text-red-500 hover:text-red-600 disabled:opacity-50 transition-colors py-1.5 w-full text-left cursor-pointer"
                       >
-                        <svg
-                          className="w-4 h-4 text-red-500 rotate-180"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                          />
-                        </svg>
+                        <HiOutlineLogout className="w-4 h-4 text-red-500" />
                         <span>
                           {isLoggingOut ? "সাইন আউট হচ্ছে..." : "সাইন আউট"}
                         </span>

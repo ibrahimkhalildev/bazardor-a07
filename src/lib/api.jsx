@@ -54,3 +54,12 @@ export async function getProductBySlug(slug) {
     ) || null
   )
 }
+
+export async function getProductsByCategory(categorySlug) {
+  const products = await getAllProducts()
+  return products.filter((p) => {
+    const pCat = String(p.category || '').toLowerCase()
+    const target = String(categorySlug || '').toLowerCase()
+    return pCat === target || String(p.categorySlug || '').toLowerCase() === target
+  })
+}

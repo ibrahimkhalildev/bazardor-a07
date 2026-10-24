@@ -4,6 +4,9 @@ import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useSession, signOut, authClient } from '@/lib/auth-client'
+import { FcGoogle } from 'react-icons/fc'
+import { FaGithub } from 'react-icons/fa'
+import toast from 'react-hot-toast'
 
 export default function ProfilePage () {
   const router = useRouter()
@@ -16,6 +19,7 @@ export default function ProfilePage () {
   const [selectedImage, setSelectedImage] = useState(null)
   const [loading, setLoading] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [linkingProvider, setLinkingProvider] = useState(null)
   const [message, setMessage] = useState({ type: '', text: '' })
 
   const currentName = typedName !== null ? typedName : user?.name || ''
@@ -64,32 +68,100 @@ export default function ProfilePage () {
       if (res?.error) {
         setMessage({
           type: 'error',
-          text: res.error.message || 'আপডেট ব্যর্থ হয়েছে।'
+          text: res.error.message || 'আপডেট ব্যর্থ হয়েছে।'
         })
       } else {
-        setMessage({ type: 'success', text: 'তথ্য সফলভাবে আপডেট হয়েছে!' })
+        setMessage({ type: 'success', text: 'তথ্য সফলভাবে আপডেট হয়েছে!' })
         router.refresh()
       }
     } catch {
-      setMessage({ type: 'error', text: 'কিছু ভুল হয়েছে, আবার চেষ্টা করুন।' })
+      setMessage({ type: 'error', text: 'কিছু ভুল হয়েছে, আবার চেষ্টা করুন।' })
     } finally {
       setLoading(false)
+    }
+  }
+  const handleLinkSocial = async provider => {
+    setLinkingProvider(provider)
+    try {
+      await authClient.linkSocial(
+        {
+          provider,
+          callbackURL: '/profile'
+        },
+        {
+          onRequest: () => {
+            toast.loading(
+              `${provider === 'google' ? 'গুগল' : 'গিটহাব'} লিঙ্ক করা হচ্ছে...`,
+              { id: 'social-link-toast' }
+            )
+          },
+          onSuccess: () => {
+            toast.success('অ্যাকাউন্ট সফলভাবে লিঙ্ক হয়েছে!', {
+              id: 'social-link-toast',
+              duration: 5000
+            })
+            setLinkingProvider(null)
+            router.refresh()
+          },
+          onError: ctx => {
+            toast.error(
+              ctx?.error?.message ||
+                'সোশ্যাল অ্যাকাউন্ট লিঙ্ক করতে সমস্যা হয়েছে, আবার চেষ্টা করুন।',
+              { id: 'social-link-toast', duration: 5000 }
+            )
+            setLinkingProvider(null)
+          }
+        }
+      )
+    } catch {
+      toast.error('সোশ্যাল অ্যাকাউন্ট লিঙ্ক ব্যর্থ হয়েছে!', {
+        id: 'social-link-toast',
+        duration: 5000
+      })
+      setLinkingProvider(null)
     }
   }
 
   const handleSignOut = async () => {
     try {
       setIsLoggingOut(true)
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('logout_success', 'true')
+      }
       await signOut({
         fetchOptions: {
           onSuccess: () => {
+            toast.success('সফলভাবে লগআউট হয়েছে!', {
+              id: 'auth-notification',
+              duration: 5000
+            })
             router.push('/')
             router.refresh()
+          },
+          onError: ctx => {
+            if (typeof window !== 'undefined') {
+              sessionStorage.removeItem('logout_success')
+            }
+            toast.error(
+              ctx?.error?.message ||
+                'লগআউট করতে সমস্যা হয়েছে, আবার চেষ্টা করুন।',
+              {
+                id: 'auth-notification',
+                duration: 5000
+              }
+            )
           }
         }
       })
     } catch (err) {
       console.error('Sign out failed', err)
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('logout_success')
+      }
+      toast.error('লগআউট ব্যর্থ হয়েছে, আবার চেষ্টা করুন।', {
+        id: 'auth-notification',
+        duration: 5000
+      })
     } finally {
       setIsLoggingOut(false)
     }
@@ -110,7 +182,7 @@ export default function ProfilePage () {
           আমার প্রোফাইল
         </h1>
         <p className='mt-1 text-xs sm:text-sm text-gray-500'>
-          আপনার অ্যাকাউন্টের তথ্য এখানে দেখুন।
+          আপনার অ্যাকাউন্টের তথ্য ও সংযুক্ত সোশ্যাল অ্যাকাউন্ট এখানে দেখুন।
         </p>
       </div>
 
@@ -197,7 +269,7 @@ export default function ProfilePage () {
           type='button'
           disabled={isLoggingOut}
           onClick={handleSignOut}
-          className='flex items-center gap-2 px-4 py-2 border border-red-200 hover:border-red-300 rounded-xl text-xs font-semibold text-red-500 hover:bg-red-50/50 transition-colors disabled:opacity-50 self-end sm:self-auto'
+          className='flex items-center gap-2 px-4 py-2 border border-red-200 hover:border-red-300 rounded-xl text-xs font-semibold text-red-500 hover:bg-red-50/50 transition-colors disabled:opacity-50 self-end sm:self-auto cursor-pointer'
         >
           <svg
             className='w-3.5 h-3.5 rotate-180'
@@ -216,9 +288,9 @@ export default function ProfilePage () {
         </button>
       </div>
 
-      <div className='bg-white rounded-2xl border border-gray-100 shadow-xs p-6'>
+      <div className='bg-white rounded-2xl border border-gray-100 shadow-xs p-6 mb-6'>
         <h3 className='text-sm sm:text-base font-bold text-gray-900 mb-4'>
-          তথ্য
+          ব্যক্তিগত তথ্য
         </h3>
 
         <form onSubmit={handleUpdate} className='space-y-5'>
@@ -243,6 +315,45 @@ export default function ProfilePage () {
             {loading ? 'আপডেট হচ্ছে...' : 'আপডেট'}
           </button>
         </form>
+      </div>
+
+      <div className='bg-white rounded-2xl border border-gray-100 shadow-xs p-6'>
+        <h3 className='text-sm sm:text-base font-bold text-gray-900 mb-1'>
+          সংযুক্ত অ্যাকাউন্ট (Social Accounts)
+        </h3>
+        <p className='text-xs text-gray-500 mb-4'>
+          এক ক্লিকে লগইন করতে আপনার Google বা GitHub অ্যাকাউন্ট যুক্ত করুন।
+        </p>
+
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+          <button
+            type='button'
+            disabled={linkingProvider !== null}
+            onClick={() => handleLinkSocial('google')}
+            className='flex items-center justify-center gap-2.5 px-4 py-2.5 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-60 cursor-pointer shadow-2xs'
+          >
+            <FcGoogle className='text-lg shrink-0' />
+            <span>
+              {linkingProvider === 'google'
+                ? 'লিঙ্ক হচ্ছে...'
+                : 'Google অ্যাকাউন্ট লিঙ্ক করুন'}
+            </span>
+          </button>
+
+          <button
+            type='button'
+            disabled={linkingProvider !== null}
+            onClick={() => handleLinkSocial('github')}
+            className='flex items-center justify-center gap-2.5 px-4 py-2.5 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 transition-colors disabled:opacity-60 cursor-pointer shadow-2xs'
+          >
+            <FaGithub className='text-lg shrink-0 text-gray-800' />
+            <span>
+              {linkingProvider === 'github'
+                ? 'লিঙ্ক হচ্ছে...'
+                : 'GitHub অ্যাকাউন্ট লিঙ্ক করুন'}
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   )
