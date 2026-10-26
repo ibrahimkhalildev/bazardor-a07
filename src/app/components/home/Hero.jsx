@@ -31,18 +31,18 @@ export default function Hero() {
 
   return (
     <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-      <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] border border-[#e8eee8] bg-[#f7f9f7] pl-6 pr-4 py-8 sm:pl-10 sm:pr-6 sm:py-10 md:pl-12 md:pr-6 md:py-12 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] border border-[#e8eee8] bg-[#f7f9f7] p-6 sm:p-8 md:p-10 lg:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
 
-        <div className="flex-1 max-w-2xl text-left z-10">
-          <div className="inline-flex items-center min-h-7 bg-[#daf0e3] text-[#087f43] text-xs font-medium px-3 py-1.5 rounded-full mb-4">
+        <div className="flex-1 min-w-0 max-w-xl text-left z-10">
+          <div className="inline-flex items-center min-h-7 bg-[#daf0e3] text-[#087f43] text-xs font-medium px-3 py-1.5 rounded-full mb-3 sm:mb-4">
             {currentDate || <span className="opacity-0">তারিখ লোড হচ্ছে...</span>}
           </div>
 
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[34px] font-black text-gray-900 tracking-tight whitespace-nowrap mb-3 sm:mb-4">
+          <h1 className="text-2xl sm:text-3xl lg:text-[34px] font-black text-gray-900 tracking-tight leading-tight mb-2.5 sm:mb-3">
             আজকের বাজারের দাম এক নজরে
           </h1>
 
-          <p className="text-xs sm:text-[13px] text-gray-500 leading-relaxed mb-6 sm:mb-8">
+          <p className="text-xs sm:text-[13px] text-gray-500 leading-relaxed mb-5 sm:mb-7 max-w-lg">
             চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার দাম — বাজারভিত্তিক বিস্তারিত, গড়, সর্বনিম্ন-সর্বোচ্চ এবং দামের পরিবর্তন এক জায়গায়।
           </p>
 
@@ -55,15 +55,15 @@ export default function Hero() {
           </a>
         </div>
 
-        <div className="flex-1 flex justify-center md:justify-end w-full md:w-auto -mr-2 sm:mr-0">
-          <div className="relative w-56 h-48 sm:w-72 sm:h-56 md:w-80 md:h-64 lg:w-87.5 lg:h-65">
+        <div className="shrink-0 flex justify-center items-center">
+          <div className="relative w-44 h-36 sm:w-56 sm:h-44 md:w-60 md:h-48 lg:w-80 lg:h-64">
             <Image
               src={heroImg}
-              alt="বাজারের ফলের ঝুড়ি"
+              alt="বাজারের ফলের ঝুড়ি"
               priority
               className="object-contain select-none pointer-events-none"
               fill
-              sizes="(max-width: 768px) 224px, (max-width: 1024px) 320px, 350px"
+              sizes="(max-width: 640px) 176px, (max-width: 768px) 224px, (max-width: 1024px) 240px, 320px"
             />
           </div>
         </div>

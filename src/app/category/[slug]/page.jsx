@@ -29,8 +29,8 @@ export default async function CategoryPage ({ params }) {
     category?.icon || products[0]?.categoryIcon || products[0]?.image || '📦'
 
   return (
-    <div className='min-h-screen bg-[#E1E8E1] py-6 sm:py-8 font-sans antialiased'>
-      <main className='w-full max-w-6xl mx-auto px-4 sm:px-6 space-y-4'>
+    <div className='min-h-screen bg-[#E1E8E1] py-4 sm:py-6 lg:py-8 font-sans antialiased'>
+      <main className='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4'>
         <section className='bg-white rounded-3xl border border-gray-100/90 p-6 sm:p-8 flex items-center gap-5 shadow-xs'>
           <div className='w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#f0f4f0] flex items-center justify-center text-3xl sm:text-4xl shrink-0 select-none'>
             {categoryIcon}

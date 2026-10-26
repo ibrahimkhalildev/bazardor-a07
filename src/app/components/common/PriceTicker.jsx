@@ -11,8 +11,9 @@ export default function PriceTicker ({ products = [] }) {
   const doubledItems = [...products, ...products]
 
   return (
-    <div className='w-full bg-[#f8f9fa] border-y border-gray-200 overflow-hidden py-2 text-xs select-none'>
-      <div className='animate-marquee flex items-center'>
+    // প্যারেন্ট থেকে py-2 বাদ দিয়ে h-10 বা h-11 ও items-stretch রাখা হয়েছে
+    <div className='w-full bg-[#f8f9fa] border-y border-gray-200 overflow-hidden text-xs select-none'>
+      <div className='animate-marquee flex items-stretch w-max'>
         {doubledItems.map((item, index) => {
           const name = item.nameBn || item.name
           const price = item.today ?? item.price ?? 0
@@ -43,7 +44,7 @@ export default function PriceTicker ({ products = [] }) {
           return (
             <div
               key={`${item.id || index}-${index}`}
-              className='flex items-center gap-2 whitespace-nowrap px-6 border-r border-gray-200 last:border-r-0'
+              className='flex items-center gap-2 whitespace-nowrap px-6 py-2.5 border-r border-gray-200 self-stretch'
             >
               <span>{emoji}</span>
               <span className='font-semibold text-gray-800'>{name}</span>

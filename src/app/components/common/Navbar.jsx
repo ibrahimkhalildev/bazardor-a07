@@ -100,34 +100,37 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-white border-b border-gray-100 sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#087f43] flex items-center justify-center text-white shadow-xs">
-              <HiShoppingCart className="w-5 h-5" />
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#087f43] flex items-center justify-center text-white shadow-xs shrink-0">
+              <HiShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <span className="font-bold text-lg sm:text-xl text-gray-900 block leading-tight">
+            <div className="flex flex-col justify-center">
+              <span className="font-bold text-base sm:text-xl text-gray-900 leading-tight">
                 বাজার দর
               </span>
-              <span className="text-[11px] text-gray-500 font-normal min-h-3.5 block">
+              <span 
+                suppressHydrationWarning
+                className="text-[10px] sm:text-[11px] text-gray-500 font-normal leading-tight mt-0.5"
+              >
                 {currentDate || "—"}
               </span>
             </div>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {isPending ? (
-              <div className="h-8 w-24 bg-gray-100 rounded-lg animate-pulse" />
+              <div className="h-8 w-16 sm:w-24 bg-gray-100 rounded-lg animate-pulse" />
             ) : user ? (
               <div className="relative" ref={menuRef}>
                 <button
                   type="button"
                   onClick={() => setMenuOpen((prev) => !prev)}
-                  className="flex items-center gap-2.5 p-1 rounded-full hover:bg-gray-50 transition-colors focus:outline-none cursor-pointer"
+                  className="flex items-center gap-1.5 sm:gap-2.5 p-1 rounded-full hover:bg-gray-50 transition-colors focus:outline-none cursor-pointer"
                 >
                   {user.image ? (
-                    <div className="relative w-8 h-8 rounded-full overflow-hidden border border-gray-200">
+                    <div className="relative w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden border border-gray-200">
                       <Image
                         src={user.image}
                         alt={user.name || "User Avatar"}
@@ -137,24 +140,24 @@ export default function Navbar() {
                       />
                     </div>
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs font-semibold text-gray-700">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-200 border border-gray-300 flex items-center justify-center text-xs font-semibold text-gray-700">
                       {user.name ? user.name.charAt(0).toUpperCase() : "U"}
                     </div>
                   )}
 
-                  <span className="text-sm font-medium text-gray-800">
+                  <span className="text-xs sm:text-sm font-medium text-gray-800 max-w-22.5 sm:max-w-none truncate">
                     {displayName}
                   </span>
 
                   <HiChevronDown
-                    className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
+                    className={`w-3.5 h-3.5 text-gray-500 transition-transform duration-200 ${
                       menuOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
 
                 {menuOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-4 px-5 z-50">
+                  <div className="absolute right-0 mt-2 w-60 sm:w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-3 sm:py-4 px-4 sm:px-5 z-50">
                     <div className="mb-3">
                       <p className="font-bold text-sm text-gray-900 leading-snug">
                         {user.name}
@@ -164,7 +167,7 @@ export default function Navbar() {
                       </p>
                     </div>
 
-                    <div className="space-y-2 pt-2 border-t border-gray-100">
+                    <div className="space-y-1.5 pt-2 border-t border-gray-100">
                       <Link
                         href="/profile"
                         onClick={() => setMenuOpen(false)}
@@ -190,16 +193,17 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <Link
                   href="/sign-in"
-                  className="text-xs sm:text-sm font-semibold text-gray-800 hover:text-[#087f43] px-2 py-1.5 transition-colors"
+                  className="text-xs sm:text-sm font-medium text-gray-700 hover:text-[#087f43] px-2 sm:px-2.5 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   সাইন ইন
                 </Link>
+                
                 <Link
                   href="/sign-up"
-                  className="bg-[#087f43] hover:bg-[#066736] text-white text-xs sm:text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-xs"
+                  className="bg-[#087f43] hover:bg-[#066736] text-white text-xs sm:text-sm font-medium px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all shadow-[0_10px_20px_-3px_rgba(8,127,67,0.45)] hover:shadow-[0_12px_24px_-3px_rgba(8,127,67,0.55)] hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
                 >
                   সাইন আপ
                 </Link>
