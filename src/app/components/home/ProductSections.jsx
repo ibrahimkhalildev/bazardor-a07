@@ -56,7 +56,7 @@ export default function ProductSections({ products = [] }) {
                 </section>
             )}
 
-            <section id="সব-পণ্য" className="scroll-mt-8">
+            <section id="সব-পণ্য" className="scroll-mt-36 sm:scroll-mt-40">
                 <div className="mb-4">
                     <h2 className="text-base sm:text-lg font-bold text-gray-900 tracking-tight">
                         সব পণ্য

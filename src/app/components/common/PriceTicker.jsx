@@ -3,7 +3,7 @@ const toBanglaNumber = num => {
   return new Intl.NumberFormat('bn-BD').format(num)
 }
 
-export default function PriceTicker ({ products = [] }) {
+export default function PriceTicker({ products = [] }) {
   if (!products || !Array.isArray(products) || products.length === 0) {
     return null
   }
@@ -11,7 +11,6 @@ export default function PriceTicker ({ products = [] }) {
   const doubledItems = [...products, ...products]
 
   return (
-    // প্যারেন্ট থেকে py-2 বাদ দিয়ে h-10 বা h-11 ও items-stretch রাখা হয়েছে
     <div className='w-full bg-[#f8f9fa] border-y border-gray-200 overflow-hidden text-xs select-none'>
       <div className='animate-marquee flex items-stretch w-max'>
         {doubledItems.map((item, index) => {
@@ -21,8 +20,8 @@ export default function PriceTicker ({ products = [] }) {
             item.unit === 'kg'
               ? 'কেজি'
               : item.unit === 'litre'
-              ? 'লিটার'
-              : item.unit || 'কেজি'
+                ? 'লিটার'
+                : item.unit || 'কেজি'
           const emoji = item.image || item.categoryIcon || '🛒'
 
           const dir =
@@ -30,16 +29,16 @@ export default function PriceTicker ({ products = [] }) {
             (item.change?.pct > 0
               ? 'up'
               : item.change?.pct < 0
-              ? 'down'
-              : 'flat')
+                ? 'down'
+                : 'flat')
           const pct = Math.abs(item.change?.pct ?? 0)
 
           const changeText =
             dir === 'up'
               ? `▲ ${toBanglaNumber(pct)}%`
               : dir === 'down'
-              ? `▼ ${toBanglaNumber(pct)}%`
-              : `— ${toBanglaNumber(pct)}%`
+                ? `▼ ${toBanglaNumber(pct)}%`
+                : `— ${toBanglaNumber(pct)}%`
 
           return (
             <div
@@ -52,13 +51,12 @@ export default function PriceTicker ({ products = [] }) {
                 {toBanglaNumber(price)} টাকা/{unit}
               </span>
               <span
-                className={`font-bold flex items-center text-[11px] ${
-                  dir === 'up'
+                className={`font-bold flex items-center text-[11px] ${dir === 'up'
                     ? 'text-red-500'
                     : dir === 'down'
-                    ? 'text-emerald-600'
-                    : 'text-gray-500'
-                }`}
+                      ? 'text-emerald-600'
+                      : 'text-gray-500'
+                  }`}
               >
                 {changeText}
               </span>
