@@ -23,6 +23,27 @@ function AuthToastHandler () {
     }
 
     const authStatus = searchParams.get('auth')
+    const authError = searchParams.get('error')
+
+    if (authError === 'auth_required' && !isTriggered.current) {
+      isTriggered.current = true
+
+      toast.error('বিস্তারিত দেখতে অনুগ্রহ করে আগে সাইন-ইন করুন!', {
+        id: 'auth-required-notification',
+        duration: 5000
+      })
+
+      const timer = setTimeout(() => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.delete('error')
+        const newQuery = params.toString()
+        const targetUrl = newQuery ? `${pathname}?${newQuery}` : pathname
+        router.replace(targetUrl, { scroll: false })
+        isTriggered.current = false
+      }, 150)
+
+      return () => clearTimeout(timer)
+    }
 
     if (authStatus && !isTriggered.current) {
       isTriggered.current = true
@@ -51,7 +72,7 @@ function AuthToastHandler () {
         const targetUrl = newQuery ? `${pathname}?${newQuery}` : pathname
         router.replace(targetUrl, { scroll: false })
         isTriggered.current = false
-      }, 100)
+      }, 150)
 
       return () => clearTimeout(timer)
     }

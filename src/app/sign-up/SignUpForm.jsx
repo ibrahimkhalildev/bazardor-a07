@@ -57,9 +57,21 @@ export default function SignUpForm() {
       });
 
       if (res?.error) {
-        toast.error(res.error.message || "অ্যাকাউন্ট তৈরিতে সমস্যা হয়েছে!", {
-          duration: 5000,
-        });
+        const errMsg = res.error.message || "";
+        if (
+          errMsg.includes("User already exists") ||
+          res.error.status === 422 ||
+          res.error.code === "USER_ALREADY_EXISTS"
+        ) {
+          toast.error(
+            "এই ইমেইল দিয়ে ইতোমধ্যে একটি অ্যাকাউন্ট খোলা রয়েছে। অনুগ্রহ করে সাইন ইন করুন।",
+            { duration: 5000 }
+          );
+        } else {
+          toast.error(errMsg || "অ্যাকাউন্ট তৈরিতে সমস্যা হয়েছে!", {
+            duration: 5000,
+          });
+        }
       } else {
         toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!", { duration: 5000 });
         router.push(callbackUrl);

@@ -3,17 +3,20 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
 export async function requireAuth(callbackPath = "") {
-    const headerList = await headers();
-    const session = await auth.api.getSession({
-        headers: headerList,
-    });
+  const headerList = await headers();
+  const session = await auth.api.getSession({
+    headers: headerList,
+  });
 
-    if (!session) {
-        const redirectUrl = callbackPath
-            ? `/sign-in?callbackUrl=${encodeURIComponent(callbackPath)}`
-            : "/sign-in";
-        redirect(redirectUrl);
+  if (!session) {
+    const params = new URLSearchParams();
+    if (callbackPath) {
+      params.set("callbackURL", callbackPath);
     }
+    params.set("error", "auth_required");
 
-    return session;
+    redirect(`/sign-in?${params.toString()}`);
+  }
+
+  return session;
 }
